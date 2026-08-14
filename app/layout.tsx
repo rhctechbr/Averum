@@ -6,9 +6,9 @@ import "./globals.css";
 const manrope = Manrope({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: { default: "CofreFluxo", template: "%s | CofreFluxo" },
+  title: { default: "Averum", template: "%s | Averum" },
   description: "Finanças pessoais com clareza e segurança.",
-  applicationName: "CofreFluxo",
+  applicationName: "Averum",
 };
 
 export const viewport: Viewport = { themeColor: "#185C45", colorScheme: "light" };

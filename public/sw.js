@@ -1,4 +1,4 @@
-const STATIC_CACHE = "cofrefluxo-static-v1";
+const STATIC_CACHE = "averum-static-v1";
 const ALLOWED_PUBLIC_ASSETS = /^\/icons\//;
 const NEXT_STATIC_ASSETS = /^\/_next\/static\//;
 

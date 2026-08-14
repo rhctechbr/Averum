@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "CofreFluxo",
-    short_name: "CofreFluxo",
+    name: "Averum",
+    short_name: "Averum",
     description: "Finanças pessoais com clareza e segurança.",
     start_url: "/dashboard",
     display: "standalone",

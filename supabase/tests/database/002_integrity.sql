@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(28);
+select plan(35);
 create temporary table tap_results (line text);
 grant select, insert on tap_results to authenticated;
 
@@ -204,6 +204,36 @@ insert into tap_results values (throws_ok(
 insert into tap_results values (throws_ok(
   $$insert into public.transactions (user_id, kind, amount, transaction_date, description, category_id, category_type, account_id, is_paid) values ('11111111-1111-4111-8111-111111111111', 'expense', 10, date '2026-08-14', repeat('x', 221), 'a0300000-0000-4000-8000-000000000001', 'expense', 'a0100000-0000-4000-8000-000000000001', true)$$,
   '23514', null, 'descrição de lançamento respeita limite de 220 caracteres'
+));
+
+insert into tap_results values (lives_ok(
+  $$select public.create_installment_plan('RPC', 100.00, 3::smallint, date '2026-01-31', 'a0300000-0000-4000-8000-000000000001'::uuid, 'a0100000-0000-4000-8000-000000000001'::uuid, null::uuid)$$,
+  'função cria parcelamento atomicamente'
+));
+insert into tap_results values (is(
+  (select count(*) from public.transactions where description like 'RPC — %'), 3::bigint,
+  'função cria todas as parcelas'
+));
+insert into tap_results values (is(
+  (select sum(amount) from public.transactions where description like 'RPC — %'), 100.00::numeric,
+  'parcelas preservam o total exato'
+));
+insert into tap_results values (results_eq(
+  $$select transaction_date from public.transactions where description like 'RPC — %' order by installment_number$$,
+  $$values (date '2026-01-31'), (date '2026-02-28'), (date '2026-03-31')$$,
+  'parcelas retornam ao dia original após mês curto'
+));
+insert into tap_results values (lives_ok(
+  $$select public.generate_salary_month(date '2026-09-01')$$,
+  'função gera as duas partes do salário'
+));
+insert into tap_results values (is(
+  (select count(*) from public.transactions where salary_competence = date '2026-09-01'), 2::bigint,
+  'salário gera exatamente duas transações'
+));
+insert into tap_results values (throws_ok(
+  $$select public.generate_salary_month(date '2026-09-01')$$,
+  '23505', 'salary already generated', 'geração salarial por RPC é idempotente'
 ));
 
 select line from tap_results union all select * from finish();

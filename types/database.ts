@@ -373,7 +373,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_installment_plan: {
+        Args: { p_description: string; p_total_amount: number; p_installments_count: number; p_first_installment_date: string; p_category_id: string; p_account_id?: string | null; p_card_id?: string | null }
+        Returns: string
+      }
+      generate_salary_month: { Args: { p_competence: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
@@ -506,4 +510,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
